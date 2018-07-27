@@ -15,5 +15,8 @@ class Resolvers::CreateLink < GraphQL::Function
       description: args[:description],
       url: args[:url],
     )
+  rescue ActiveRecord::RecordInvalid => e
+    # this will catch all validation errors and translate them to GraphQL::ExecutionError
+    GraphQL::ExecutionError.new("Invalid input: #{e.record.errors.full_messages.join(', ')}")
   end
 end
